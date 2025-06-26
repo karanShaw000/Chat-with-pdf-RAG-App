@@ -4,6 +4,7 @@ from qdrant_client import QdrantClient, models
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client.http.models import Distance, VectorParams
+import streamlit as st
 
 load_dotenv()
 
@@ -11,6 +12,7 @@ load_dotenv()
 embedding_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
 
+@st.cache_resource
 def get_vector_store() -> QdrantVectorStore:
     COLLECTION_NAME = "Chat_PDF"
     client = QdrantClient(url=os.getenv("DB_URL"), api_key=os.getenv("QDRANT_API_KEY"), timeout=60)

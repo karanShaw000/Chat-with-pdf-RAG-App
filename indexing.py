@@ -1,7 +1,9 @@
+import time
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from setup import get_vector_store
+
 
 
 
@@ -29,13 +31,14 @@ def index(pdf_path, pdf_id, progress_setter):
 
         if progress_setter:
             vector_store = get_vector_store()
-            batch_size = 2
+            batch_size = 10
             total_batches = (len(split_docs) + batch_size - 1)
             for idx, i in enumerate(range(0, len(split_docs), batch_size)):
                 chunk = split_docs[i : i + batch_size]
                 vector_store.add_documents(chunk)
                 progress = 60 + int((idx / total_batches) * 40) # From 60 to 100
                 progress_setter(progress, f"Storing embeddings...({idx}/{total_batches} batches)")
+                time.sleep(3) # Throting for limit the gemini request
 
         if progress_setter:
             progress_setter(100, "Indexing Done!!!")
